@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Nível | Acelerador de Conversação</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: #0a0a0a;
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .container { max-width: 560px; width: 100%; }
+
+  /* HEADER */
+  .header-label { font-size: 13px; color: #666; margin-bottom: 8px; font-weight: 500; }
+  .header-count { font-size: 13px; color: #888; margin-bottom: 12px; }
+  .progress-bar { height: 4px; background: #1a1a1a; border-radius: 2px; overflow: hidden; margin-bottom: 32px; }
+  .progress-fill { height: 100%; background: #F97316; border-radius: 2px; transition: width 0.3s ease; width: 0%; }
+
+  /* QUESTION */
+  .question { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 28px; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option-btn {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    color: #a0a0a0;
+    font-size: 15px;
+    line-height: 1.5;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .option-btn:hover { border-color: #444; color: #ccc; }
+  .option-btn.selected {
+    background: rgba(249, 115, 22, 0.08);
+    border-color: rgba(249, 115, 22, 0.5);
+    color: #f0f0f0;
+  }
+
+  /* NEXT BUTTON */
+  .next-btn {
+    margin-top: 28px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: #1a1a1a;
+    color: #444;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: default;
+    transition: all 0.15s ease;
+  }
+  .next-btn.active {
+    background: #F97316;
+    color: #fff;
+    cursor: pointer;
+  }
+  .next-btn.active:hover { background: #FB923C; }
+
+  /* RESULT */
+  .result { text-align: center; display: none; }
+  .result-badge {
+    font-size: 14px;
+    font-weight: 600;
+    color: #22C55E;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+  }
+  .result-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .result-card {
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+  .result-card.level-1 {
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+  }
+  .result-card.level-2 {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+  }
+  .level-name {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .level-name.level-1 { color: #F97316; }
+  .level-name.level-2 { color: #22C55E; }
+  .level-desc {
+    font-size: 15px;
+    color: #a0a0a0;
+    line-height: 1.7;
+  }
+  .result-note {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #a0a0a0;
+    line-height: 1.7;
+  }
+  .restart-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .restart-btn:hover { border-color: #555; color: #aaa; }
+
+  /* QUIZ AREA */
+  .quiz { display: block; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- QUIZ -->
+  <div class="quiz" id="quiz">
+    <div class="header-label">Diagnóstico de Nível — Acelerador de Conversação</div>
+    <div class="header-count" id="count">Pergunta 1 de 7</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <h2 class="question" id="question"></h2>
+    <div class="options" id="options"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Próxima pergunta</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="result">
+    <div class="result-badge">Diagnóstico completo</div>
+    <h1 class="result-title">Seu nível sugerido:</h1>
+    <div class="result-card" id="resultCard">
+      <div class="level-name" id="levelName"></div>
+      <p class="level-desc" id="levelDesc"></p>
+    </div>
+    <div class="result-note">
+      Essa é uma sugestão com base nas suas respostas. Se você sentir que outro nível faz mais sentido pra você, fique à vontade pra escolher. O importante é você se sentir confortável pra praticar.
+    </div>
+    <button class="restart-btn" onclick="restart()">Refazer diagnóstico</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Se um gringo te pedisse uma direção na rua agora, o que aconteceria?",
+    options: [
+      { text: "Travaria completamente, não sairia nada", points: 1 },
+      { text: "Tentaria falar, mas com muita dificuldade e misturando português", points: 2 },
+      { text: "Conseguiria me virar, mesmo que de forma simples", points: 3 },
+    ],
+  },
+  {
+    question: "Quantas vezes na vida você manteve uma conversa em inglês por mais de 1 minuto?",
+    options: [
+      { text: "Nunca consegui passar de algumas palavras soltas", points: 1 },
+      { text: "Já tentei algumas vezes, mas travo no meio e desisto", points: 2 },
+      { text: "Já consegui manter pelo menos uma conversa curta", points: 3 },
+    ],
+  },
+  {
+    question: "Se você tivesse que se apresentar em inglês agora (nome, de onde é, o que faz), conseguiria?",
+    options: [
+      { text: "Não, travaria logo no começo", points: 1 },
+      { text: "Conseguiria falar meu nome e de onde sou, mas pararia aí", points: 2 },
+      { text: "Conseguiria me apresentar, mesmo que devagar", points: 3 },
+    ],
+  },
+  {
+    question: "Quando você ouve inglês falado (em filme, série ou música), o que acontece?",
+    options: [
+      { text: "Pego uma palavra ou outra, mas no geral não entendo quase nada", points: 1 },
+      { text: "Entendo o assunto geral, mas perco boa parte dos detalhes", points: 2 },
+      { text: "Entendo a maior parte, principalmente se não for muito rápido", points: 3 },
+    ],
+  },
+  {
+    question: "Se te chamassem pra uma entrevista de emprego em inglês amanhã, o que você faria?",
+    options: [
+      { text: "Recusaria na hora, não tenho condição nenhuma", points: 1 },
+      { text: "Aceitaria, mas passaria a noite inteira em pânico tentando me preparar", points: 2 },
+      { text: "Ficaria nervoso(a), mas aceitaria e tentaria me virar", points: 3 },
+    ],
+  },
+  {
+    question: "Como você se sente com a ideia de entrar numa aula de conversação em inglês com outras pessoas?",
+    options: [
+      { text: "Muito nervoso(a), tenho medo de passar vergonha", points: 1 },
+      { text: "Nervoso(a), mas animado(a) ao mesmo tempo", points: 2 },
+      { text: "Tranquilo(a), só preciso de prática pra destravar", points: 3 },
+    ],
+  },
+  {
+    question: "Você já viajou para fora e precisou usar inglês?",
+    options: [
+      { text: "Nunca viajei ou nunca precisei falar inglês na viagem", points: 1 },
+      { text: "Já tentei, mas foi muito difícil e dependi de outras pessoas", points: 2 },
+      { text: "Já me virei em situações básicas como hotel, restaurante ou aeroporto", points: 3 },
+    ],
+  },
+];
+
+const levels = {
+  1: {
+    name: "Nível 1 — Starter",
+    description: "Grupo ideal pra quem entende palavras soltas mas ainda trava na hora de montar uma frase. Aqui todo mundo tá começando junto, no mesmo ponto. As atividades são simples, o ritmo é leve, e o professor guia cada passo. Você vai se surpreender com o quanto evolui já nas primeiras aulas.",
+    cssClass: "level-1",
+  },
+  2: {
+    name: "Nível 2 — Builder",
+    description: "Grupo ideal pra quem já entende bastante e consegue se virar em situações básicas. Aqui as conversas são mais soltas, as situações mais variadas, e o foco é ganhar confiança e naturalidade. Você vai praticar com gente que também já tem base mas quer destravar de vez.",
+    cssClass: "level-2",
+  },
+};
+
+let current = 0;
+let answers = [];
+let selected = null;
+
+function render() {
+  const q = questions[current];
+  document.getElementById("count").textContent = `Pergunta ${current + 1} de ${questions.length}`;
+  document.getElementById("progress").style.width = `${((current) / questions.length) * 100}%`;
+  document.getElementById("question").textContent = q.question;
+
+  const optionsEl = document.getElementById("options");
+  optionsEl.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = opt.text;
+    btn.onclick = () => selectOption(i, opt.points);
+    optionsEl.appendChild(btn);
+  });
+
+  selected = null;
+  const nextBtn = document.getElementById("nextBtn");
+  nextBtn.className = "next-btn";
+  nextBtn.textContent = current < questions.length - 1 ? "Próxima pergunta" : "Ver meu nível";
+}
+
+function selectOption(index, points) {
+  selected = points;
+  const btns = document.querySelectorAll(".option-btn");
+  btns.forEach((b, i) => {
+    b.className = i === index ? "option-btn selected" : "option-btn";
+  });
+  const nextBtn = document.getElementById("nextBtn");
+  nextBtn.className = "next-btn active";
+  document.getElementById("progress").style.width = `${((current + 1) / questions.length) * 100}%`;
+}
+
+function nextQuestion() {
+  if (selected === null) return;
+  answers.push(selected);
+
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const total = answers.reduce((a, b) => a + b, 0);
+  const level = total >= 19 ? 2 : 1;
+  const data = levels[level];
+
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  document.getElementById("levelName").textContent = data.name;
+  document.getElementById("levelName").className = `level-name ${data.cssClass}`;
+  document.getElementById("levelDesc").textContent = data.description;
+  document.getElementById("resultCard").className = `result-card ${data.cssClass}`;
+}
+
+function restart() {
+  current = 0;
+  answers = [];
+  selected = null;
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("result").style.display = "none";
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
