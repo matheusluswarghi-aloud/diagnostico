@@ -163,7 +163,7 @@
       <p class="level-desc" id="levelDesc"></p>
     </div>
     <div class="result-note">
-      Essa é uma sugestão com base nas suas respostas. Se você sentir que outro nível faz mais sentido pra você, fique à vontade pra escolher. O importante é você se sentir confortável pra praticar.
+      Esse é o nível que sugerimos com base nas suas respostas. Caso o professor identifique durante as aulas que você tem um nível mais avançado, ele vai te sugerir a mudança de grupo pra você aproveitar ainda melhor a experiência.
     </div>
     <button class="restart-btn" onclick="restart()">Refazer diagnóstico</button>
   </div>
@@ -213,11 +213,11 @@ const questions = [
     ],
   },
   {
-    question: "Como você se sente com a ideia de entrar numa aula de conversação em inglês com outras pessoas?",
+    question: "Se você encontrasse um turista gringo perdido pedindo ajuda, você tentaria ajudar em inglês?",
     options: [
-      { text: "Muito nervoso(a), tenho medo de passar vergonha", points: 1 },
-      { text: "Nervoso(a), mas animado(a) ao mesmo tempo", points: 2 },
-      { text: "Tranquilo(a), só preciso de prática pra destravar", points: 3 },
+      { text: "Não, fingiria que não ouvi e seguiria andando", points: 1 },
+      { text: "Tentaria ajudar, mas provavelmente ia travar e misturar com português", points: 2 },
+      { text: "Tentaria ajudar e conseguiria dar pelo menos uma direção básica", points: 3 },
     ],
   },
   {
@@ -232,13 +232,13 @@ const questions = [
 
 const levels = {
   1: {
-    name: "Nível 1 — Starter",
-    description: "Grupo ideal pra quem entende palavras soltas mas ainda trava na hora de montar uma frase. Aqui todo mundo tá começando junto, no mesmo ponto. As atividades são simples, o ritmo é leve, e o professor guia cada passo. Você vai se surpreender com o quanto evolui já nas primeiras aulas.",
+    name: "\uD83C\uDFAF Foundation",
+    description: "Para quem está dando os primeiros passos no inglês. Ideal para alunos que tiveram pouco contato com o idioma. As atividades são simples, o ritmo é leve, e o professor guia cada passo. Você vai se surpreender com o quanto evolui já nas primeiras aulas.",
     cssClass: "level-1",
   },
   2: {
-    name: "Nível 2 — Builder",
-    description: "Grupo ideal pra quem já entende bastante e consegue se virar em situações básicas. Aqui as conversas são mais soltas, as situações mais variadas, e o foco é ganhar confiança e naturalidade. Você vai praticar com gente que também já tem base mas quer destravar de vez.",
+    name: "\uD83C\uDFAF Build Up",
+    description: "Para quem já tem algum contato prévio com o inglês e consegue usar frases simples em situações do dia a dia. O foco é expandir estruturas, praticar mais vocabulário e desenvolver conversas básicas com mais naturalidade, ganhando fluência gradualmente.",
     cssClass: "level-2",
   },
 };
